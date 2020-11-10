@@ -6,7 +6,7 @@ resource "aws_lb" "example" {
   # 60秒でタイムアウト（デフォルトと同じ）
   idle_timeout        = 60
   # 削除保護を有効化
-  enable_deletion_protection  = true
+  # enable_deletion_protection  = true
 
   # ALBが所属するサブネット → 複数のAZを指定してクロスゾーン不可分散
   subnets = [

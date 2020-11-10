@@ -34,6 +34,7 @@ output "alb_dns_name" {
 }
 
 # リスナー（どのポートのリクエストを受け付けるか）の設定
+# HTTPリスナー
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.example.arn
   port              = "80"
@@ -48,6 +49,45 @@ resource "aws_lb_listener" "http" {
       content_type = "text/plain"
       message_body = "これは「HTTP」です"
       status_code  = "200"
+    }
+  }
+}
+
+# HTTPSリスナー
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.example.arn
+  port              = "443"
+  protocol          = "HTTPS"
+
+  # ACMで作成したSSL証明書を指定
+  certificate_arn   = aws_acm_certificate.acm_cert.arn
+  # セキュリティポリシー：下記が推奨
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "これは「HTTPS」です"
+      status_code  = "200"
+    }
+  }
+}
+
+# HTTPからHTTPSにリダイレクトするリスナー
+resource "aws_lb_listener" "redirect_http_to_https" {
+  load_balancer_arn = aws_lb.example.arn
+  port              = "8080"
+  protocol          = "HTTP"
+
+  default_action {
+    type= "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
     }
   }
 }

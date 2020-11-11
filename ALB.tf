@@ -91,3 +91,53 @@ resource "aws_lb_listener" "redirect_http_to_https" {
     }
   }
 }
+
+# ターゲットグループの定義（ALBがリクエストをフォワードする対象）：ECSと関連づける
+resource "aws_lb_target_group" "targetgroup_for_ecs" {
+  name        = "example"
+  # ターゲットタイプ：ipはECS Fargateを示す
+  target_type = "ip"
+  # 以下3行でルーティング先指定
+  vpc_id      = aws_vpc.example.id
+  port        = 80
+  protocol    = "HTTP"
+  # ターゲット登録解除前にALBが待機する時間
+  deregistration_delay  = 300
+
+  # ヘルスチェック
+  health_check {
+    path        = "/"
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    timeout     = 5
+    interval    = 30
+    matcher     = 200
+    port        = "traffic-port"
+    protocol    = "HTTP"
+  }
+
+  # 依存関係を明示
+  depends_on    = [aws_lb.example]
+}
+
+# リスナールール
+resource "aws_lb_listener_rule" "listerner_rule" {
+  listener_arn = aws_lb_listener.https.arn
+  # ルールの優先順位（値が小さいほど高い）
+  priority     = 100
+
+  # フォワード先のターゲットグループを設定
+  action {
+    type  = "forward"
+    target_group_arn = aws_lb_target_group.targetgroup_for_ecs.arn
+  }
+
+  condition {
+    # field = "path-pattern"
+    # value = ["/*"]
+    path_pattern {
+      values = ["/*"]
+    }
+  }
+
+}

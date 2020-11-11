@@ -3,5 +3,6 @@
 # Ignore terraform logs
 *.tfstate
 *.tfstate.backup
+.terraform.tfstate.lock.info
 # Local .terraform directories
 **/.terraform/*

@@ -24,6 +24,7 @@ resource "aws_lb" "example" {
   # HTTP, HTTPS, HTTPのリダイレクトの３つ
   security_groups = [
     module.http_sg.security_group_id,
+    module.nginx_sg.security_group_id,
     module.https_sg.security_group_id,
     module.http_redirect_sg.security_group_id,
   ]
@@ -94,7 +95,7 @@ resource "aws_lb_listener" "redirect_http_to_https" {
 
 # ターゲットグループの定義（ALBがリクエストをフォワードする対象）：ECSと関連づける
 resource "aws_lb_target_group" "targetgroup_for_ecs" {
-  name        = "example"
+  name        = "terraform-targetgroup-for-ecs"
   # ターゲットタイプ：ipはECS Fargateを示す
   target_type = "ip"
   # 以下3行でルーティング先指定

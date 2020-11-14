@@ -45,6 +45,9 @@ resource "aws_s3_bucket" "public" {
 resource "aws_s3_bucket" "alb_log" {
   bucket = "alb-log-for-terraform-20201028"
 
+  # バケット中身残ってても強制削除
+  force_destroy = true
+
   # 60日経過したファイルを自動的に削除
   lifecycle_rule {
     enabled = true

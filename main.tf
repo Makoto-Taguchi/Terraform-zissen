@@ -19,6 +19,36 @@ module "describe_regions_for_ec2" {
   policy      = data.aws_iam_policy_document.allow_describe_regions.json
 }
 
+
+# ECSタスク実行用のIAMロール作成
+data "aws_iam_policy" "ecs_task_execution_role_policy" {
+  # ECSタスク実行（AWS管理）ポリシーを参照する
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# ECSタスク実行IAMロールのポリシードキュメント
+data "aws_iam_policy_document" "ecs_task_execution" {
+  # source_jsonにより既存のポリシーデータソースを使える
+  source_json = data.aws_iam_policy.ecs_task_execution_role_policy.policy
+
+  # SSMパラメータストアとECSの統合に必要な権限付与
+  statement {
+    effect     = "Allow"
+    actions    = ["ssm:GetParameters", "kms:Decrypt"]
+    resources  = ["*"]
+  }
+}
+
+# IAMロールモジュール呼び出し
+module "ecs_task_execution_role" {
+  source      = "./iam_role"
+  name        = "ecs-task-execution"
+  # このロールを紐づけるAWSリソース
+  identifier  = "ecs-tasks.amazonaws.com"
+  # ポリシードキュメントを指定
+  policy      = data.aws_iam_policy_document.ecs_task_execution.json
+}
+
 # モジュール[security_group]呼び出し
 module "example_sg" {
   source      = "./security_group"

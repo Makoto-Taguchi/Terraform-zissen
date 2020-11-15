@@ -16,6 +16,8 @@ resource "aws_ecs_task_definition" "ecs_task" {
   requires_compatibilities = ["FARGATE"]
   # タスクで実行するコンテナ定義ファイルを指定
   container_definitions    = file("./container_definitions.json")
+  # コンテナのロギング用IAMロールをアタッチ
+  execution_role_arn       = module.ecs_task_execution_role.iam_role_arn
 }
 
 # ECSサービス定義 → 起動するタスク数の定義とタスクの維持

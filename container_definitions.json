@@ -3,6 +3,14 @@
     "name": "my_container",
     "image": "nginx:latest",
     "essential": true,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-region": "ap-northeast-1",
+        "awslogs-stream-prefix": "nginx",
+        "awslogs-group": "/ecs/ECSLogGroup"
+      }
+    },
     "portMappings": [
       {
         "protocol": "tcp",

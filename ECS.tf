@@ -20,6 +20,17 @@ resource "aws_ecs_task_definition" "ecs_task" {
   execution_role_arn       = module.ecs_task_execution_role.iam_role_arn
 }
 
+# バッチ用タスク定義（CloudWatchイベントからこのタスクを起動）
+resource "aws_ecs_task_definition" "batch_task" {
+  family          = "terraform-batch-task"
+  cpu             = "256"
+  memory          = "512"
+  network_mode    = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  container_definitions    = file("./batch_container_definitions.json")
+  execution_role_arn       = module.ecs_task_execution_role.iam_role_arn
+}
+
 # ECSサービス定義 → 起動するタスク数の定義とタスクの維持
 resource "aws_ecs_service" "ecs_service" {
   name            = "terraform-ecs-service"

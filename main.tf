@@ -20,9 +20,9 @@ module "describe_regions_for_ec2" {
 }
 
 
-# ECSタスク実行用のIAMロール作成
+# ECSタスク実行用のIAMポリシー作成
 data "aws_iam_policy" "ecs_task_execution_role_policy" {
-  # ECSタスク実行（AWS管理）ポリシーを参照する
+  # ECSタスク実行ポリシーを参照する（AWS管理）
   arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
@@ -38,15 +38,29 @@ data "aws_iam_policy_document" "ecs_task_execution" {
     resources  = ["*"]
   }
 }
-
 # IAMロールモジュール呼び出し
 module "ecs_task_execution_role" {
   source      = "./iam_role"
   name        = "ecs-task-execution"
-  # このロールを紐づけるAWSリソース
+  # このロールを紐づけるAWSリソース：ECSタスク
   identifier  = "ecs-tasks.amazonaws.com"
   # ポリシードキュメントを指定
   policy      = data.aws_iam_policy_document.ecs_task_execution.json
+}
+
+# CloudwatchイベントからECSを起動するためのIAMロール作成
+data "aws_iam_policy" "ecs_events_role_policy" {
+  # 「タスク実行」と「タスクにIAMロールを渡す」権限（AWS管理）
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceEventsRole"
+}
+# IAMロールモジュール呼び出し
+module "ecs_events_role" {
+  source     = "./iam_role"
+  name       = "ecs-events"
+  # このロールを紐づけるAWSリソース：CloudWatchイベント
+  identifier = "events.amazonaws.com"
+  # IAMポリシーを指定
+  policy     = data.aws_iam_policy.ecs_events_role_policy.policy
 }
 
 # モジュール[security_group]呼び出し

@@ -29,3 +29,4 @@ resource "aws_ssm_parameter" "db_password" {
     ignore_changes = [value]
   }
 }
+# aws ssm put-parameter --name '/db/password' --type SecureString --value '更新後パスワード' --overwrite

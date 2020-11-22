@@ -81,7 +81,7 @@ resource "aws_db_instance" "db_instance" {
   # 削除保護は一時無効化
   deletion_protection   = false
   # インスタンス削除時にスナップショット作成：一時無効化
-  skip_final_snapshot   = false
+  skip_final_snapshot   = true
 
   port                  = 3306
 
@@ -90,6 +90,8 @@ resource "aws_db_instance" "db_instance" {
 
   # セキュリティグループ
   vpc_security_group_ids = [module.mysql_sg.security_group_id]
+
+  # パラメータグループ、オプショングループ、サブネットグループ紐付け
   parameter_group_name  = aws_db_parameter_group.db_parameter_group.name
   option_group_name     = aws_db_option_group.db_option_group.name
   db_subnet_group_name  = aws_db_subnet_group.db_subnet_group.name

@@ -90,3 +90,17 @@ resource "aws_s3_bucket" "operation_log" {
     }
   }
 }
+
+
+# CloudWacth Logsのログ永続化のためのS3バケット
+resource "aws_s3_bucket" "cloudwatch_logs" {
+  bucket ="cloudwatch-logs-terraform-20201123"
+
+  lifecycle_rule {
+    enabled = true
+
+    expiration {
+      days = "180"
+    }
+  }
+}

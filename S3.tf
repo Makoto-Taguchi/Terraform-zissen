@@ -77,3 +77,16 @@ data "aws_iam_policy_document" "alb_log" {
     }
   }
 }
+
+# Session Managerによる操作ログ保存用
+resource "aws_s3_bucket" "operation_log" {
+  bucket = "operation-terraform-20201123"
+
+  lifecycle_rule {
+    enabled = true
+
+    expiration {
+      days = "180"
+    }
+  }
+}

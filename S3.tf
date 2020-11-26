@@ -3,6 +3,8 @@ resource "aws_s3_bucket" "private" {
   # バケット名
   bucket = "private-for-terraform-20201028"
 
+  force_destroy = true
+
   # バージョニング有効化
   versioning {
     enabled = true
@@ -82,6 +84,8 @@ data "aws_iam_policy_document" "alb_log" {
 resource "aws_s3_bucket" "operation_log" {
   bucket = "operation-terraform-20201123"
 
+  force_destroy = true
+
   lifecycle_rule {
     enabled = true
 
@@ -95,6 +99,8 @@ resource "aws_s3_bucket" "operation_log" {
 # CloudWacth Logsのログ永続化のためのS3バケット
 resource "aws_s3_bucket" "cloudwatch_logs" {
   bucket ="cloudwatch-logs-terraform-20201123"
+
+  force_destroy = true
 
   lifecycle_rule {
     enabled = true

@@ -68,7 +68,7 @@ output "operation_instance_id" {
 
 
 # AWS CLI経由のシェルアクセス
-# $ aws ssm start-session --target instance_for_operation
+# $ aws ssm start-session --target  i-097a416e6a144a15c
 # 　　（--document-name session_manager_run_shell）　← aws_ssm_documentでnameを指定のものにしているなら省略可
 # アクセスできたか確認
 # $ whoami

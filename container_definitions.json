@@ -17,5 +17,18 @@
         "containerPort": 80
       }
     ]
+  },
+  {
+    "name": "example_container",
+    "image": "140178484827.dkr.ecr.ap-northeast-1.amazonaws.com/ecr-repository::latest",
+    "essential": true,
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-region": "ap-northeast-1",
+            "awslogs-stream-prefix": "example_container",
+            "awslogs-group": "/ecs/ECSLogGroup"
+        }
+    }
   }
 ]
